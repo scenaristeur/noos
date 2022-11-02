@@ -30,7 +30,7 @@ export class MainScene extends Scene3D {
     }, false);
   }
 
-  async init(data= {level:0, tablename: 'book'}) {
+  async init(data= {level:0, tablename: 'flipball'}) {
     this.renderer.setPixelRatio(Math.max(1, window.devicePixelRatio / 2))
 
     this.canJump = true
@@ -52,29 +52,22 @@ export class MainScene extends Scene3D {
     // await this.load.preload('grass', '/assets/img/grass.jpg')
     // await this.load.preload('robot', '/assets/glb/robot.glb')
     /**
-    * Medieval Fantasy Book by Pixel (https://sketchfab.com/stefan.lengyel1)
-    * https://sketchfab.com/3d-models/medieval-fantasy-book-06d5a80a04fc4c5ab552759e9a97d91a
-    * Attribution 4.0 International (CC BY 4.0)
-    */
-    if(this.tablename == 'book') {
-      // const book =
-      await this.load.preload('book', '/assets/glb/book.glb')
-    }else{
-      this.config = await import('@/tables/'+this.tablename+'/config.json');
-      console.log(this, this.config)
-      alert (this.config.type)
-    }
+       * Medieval Fantasy Book by Pixel (https://sketchfab.com/stefan.lengyel1)
+       * https://sketchfab.com/3d-models/medieval-fantasy-book-06d5a80a04fc4c5ab552759e9a97d91a
+       * Attribution 4.0 International (CC BY 4.0)
+       */
+      const book = this.load.preload('book', '/assets/glb/book.glb')
 
-    /**
-    * box_man.glb by Jan Bláha
-    * https://github.com/swift502/Sketchbook
-    * CC-0 license 2018
-    */
-    const man = await this.load.preload('man', '/assets/glb/box_man.glb')
-    // await Promise.all([book, man])
+      /**
+       * box_man.glb by Jan Bláha
+       * https://github.com/swift502/Sketchbook
+       * CC-0 license 2018
+       */
+    const man = this.load.preload('man', '/assets/glb/box_man.glb')
+     await Promise.all([book, man])
 
     console.log("man",man, isTouchDevice)
-
+    this.config = await import('@/tables/'+this.tablename+'/config.json');
     // for (let i = 0; i < 500; i++){
     //   let name = 28811+i
     //   console.log(name)
@@ -87,66 +80,17 @@ export class MainScene extends Scene3D {
     //  console.log("audio", audio)
     // loadParts(this, flipper_parts)
     // this.create()
-
+    console.log(this, this.config)
+    alert (this.config.type)
   }
 
   async create() {
 
     console.log('create')
+    // const {  lights } = await this.warpSpeed('-orbitControls')
+    const { lights } = await this.warpSpeed('-ground', '-orbitControls')
 
-
-    let warp
-
-
-    if(this.tablename == 'book') {
-      warp = await this.warpSpeed('-ground', '-orbitControls')
-      const addBook = async () => {
-        const object = await this.load.gltf('book')
-        const scene = object.scenes[0]
-
-        const book = new ExtendedObject3D()
-        book.name = 'scene'
-        book.add(scene)
-        this.add.existing(book)
-
-        // add animations
-        // sadly only the flags animations works
-        object.animations.forEach((anim, i) => {
-          book.mixer = this.animationMixers.create(book)
-          // overwrite the action to be an array of actions
-          book.action = []
-          book.action[i] = book.mixer.clipAction(anim)
-          book.action[i].play()
-        })
-
-        book.traverse(child => {
-          if (child.isMesh) {
-            child.castShadow = child.receiveShadow = false
-            child.material.metalness = 0
-            child.material.roughness = 1
-
-            if (/mesh/i.test(child.name)) {
-              this.physics.add.existing(child, {
-                shape: 'concave',
-                mass: 0,
-                collisionFlags: 1,
-                autoCenter: false
-              })
-              child.body.setAngularFactor(0, 0, 0)
-              child.body.setLinearFactor(0, 0, 0)
-            }
-          }
-        })
-      }
-      addBook()
-    }else{
-      warp = await this.warpSpeed('-orbitControls')
-      console.log(warp.ground)
-      warp.ground.material.color.g = 255
-    }
-
-
-    const { hemisphereLight, ambientLight, directionalLight } = warp.lights
+    const { hemisphereLight, ambientLight, directionalLight } = lights
     const intensity = 0.65
     hemisphereLight.intensity = intensity
     ambientLight.intensity = intensity
@@ -154,7 +98,44 @@ export class MainScene extends Scene3D {
 
     // this.physics.debug.enable()
 
+const addBook = async () => {
+  const object = await this.load.gltf('book')
+  const scene = object.scenes[0]
 
+  const book = new ExtendedObject3D()
+  book.name = 'scene'
+  book.add(scene)
+  this.add.existing(book)
+
+  // add animations
+  // sadly only the flags animations works
+  object.animations.forEach((anim, i) => {
+    book.mixer = this.animationMixers.create(book)
+    // overwrite the action to be an array of actions
+    book.action = []
+    book.action[i] = book.mixer.clipAction(anim)
+    book.action[i].play()
+  })
+
+  book.traverse(child => {
+    if (child.isMesh) {
+      child.castShadow = child.receiveShadow = false
+      child.material.metalness = 0
+      child.material.roughness = 1
+
+      if (/mesh/i.test(child.name)) {
+        this.physics.add.existing(child, {
+          shape: 'concave',
+          mass: 0,
+          collisionFlags: 1,
+          autoCenter: false
+        })
+        child.body.setAngularFactor(0, 0, 0)
+        child.body.setLinearFactor(0, 0, 0)
+      }
+    }
+  })
+}
 
     const addMan = async () => {
       const object = await this.load.gltf('man')
@@ -165,14 +146,8 @@ export class MainScene extends Scene3D {
       this.man.rotateY(Math.PI + 0.1) // a hack
       this.man.add(man)
       this.man.rotation.set(0, Math.PI * 1.5, 0)
-
-
-      if(this.tablename == 'book') {
-        this.man.position.set(35, 0, 0)
-      }else{
-        this.man.position.set(0, 1, 0)
-      }
-
+      this.man.position.set(35, 0, 0)
+            // this.man.position.set(0, 1, 0)
       // add shadow
       this.man.traverse(child => {
         if (child.isMesh) {
@@ -210,8 +185,6 @@ export class MainScene extends Scene3D {
       // https://docs.panda3d.org/1.10/python/programming/physics/bullet/ccd
       this.man.body.setCcdMotionThreshold(1e-7)
       this.man.body.setCcdSweptSphereRadius(0.25)
-      // man.children[0].material.color.b = 200
-      // console.log('man man', man)
 
       /**
       * Add 3rd Person Controls
@@ -237,12 +210,8 @@ export class MainScene extends Scene3D {
       }
     }
 
-
-
+    addBook()
     addMan()
-
-
-
 
 
     /**

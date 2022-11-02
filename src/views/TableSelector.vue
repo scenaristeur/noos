@@ -24,6 +24,7 @@ export default {
       tableUrl: null,
       options: [
         { id: null, name: 'Select a table to start ! ' },
+        { id: 'book', name: 'Book' },
         { id: 'accueil', name: 'Accueil' },
         { id: 'table1', name: 'Table 1' },
         { id: 'table2', name: 'Table 2' },
@@ -44,7 +45,7 @@ export default {
   },
   watch:{
     table(){
-    //  this.$store.commit('setTable', this.table)
+      //  this.$store.commit('setTable', this.table)
       const event = new CustomEvent('tableChanged', { detail: this.table });
       window.dispatchEvent(event);
     }
