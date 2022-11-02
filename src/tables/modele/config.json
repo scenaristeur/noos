@@ -1,3 +1,12 @@
 {
-  
+  "type": "modele",
+  "launcher": {
+    "position": {
+      "x": 0,
+      "y": 15,
+      "z": 7
+    },
+    "force" : 2
+  },
+  "ball_number": 10
 }

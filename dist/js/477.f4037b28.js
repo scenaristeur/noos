@@ -1,0 +1,1 @@
+"use strict";(self["webpackChunknoos"]=self["webpackChunknoos"]||[]).push([[477],{1477:function(e){e.exports=JSON.parse('{"type":"modele","launcher":{"position":{"x":0,"y":15,"z":7},"force":2},"ball_number":10}')}}]);

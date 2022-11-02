@@ -1,0 +1,1 @@
+"use strict";(self["webpackChunknoos"]=self["webpackChunknoos"]||[]).push([[921],{3921:function(e){e.exports=JSON.parse('{"type":"marble","launcher":{"position":{"x":0,"y":15,"z":7},"force":2},"ball_number":10}')}}]);

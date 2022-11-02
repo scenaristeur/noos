@@ -3,13 +3,16 @@
     Main
 
     <div class="home" id="myCanvas">
-  </div>
+
+      <!-- <div id="myCustomDiv"></div> -->
+    </div>
   </div>
 </template>
 
 <script>
-import { Project,  PhysicsLoader, /*  ExtendedObject3D, ExtendedMesh, CatmullRomCurve3*/ } from 'enable3d'
+import { Project,  PhysicsLoader, /*THREE*//*  ExtendedObject3D, ExtendedMesh, CatmullRomCurve3*/ } from 'enable3d'
 import { MainScene } from '@/helpers/enable3d/MainScene.js'
+// import { MenuScene } from '@/helpers/enable3d/MenuScene.js'
 
 export default {
   name: 'MainContent',
@@ -31,6 +34,23 @@ export default {
   },
   methods:{
     load(){
+
+      // PhysicsLoader(
+      //   // '/lib/ammo/kripken',
+      //   'lib/ammo',
+      //   () =>
+      //   new Project({
+      //     anisotropy: 1, // https://threejs.org/docs/#api/en/textures/Texture.anisotropy
+      //     antialias: false, // false by default
+      //     fixedTimeStep: 1 / 60,
+      //     gravity: { x: 0, y: -9.81, z: 0 }, // the default gravity for all scenes
+      //     maxSubSteps: 1,
+      //   //  parent: 'myCustomDiv',
+      //     renderer: new THREE.WebGLRenderer({ antialias: false }), // add a custom renderer if you want
+      //     scenes: [MenuScene, MainScene]
+      //   })
+      // )
+
       PhysicsLoader('lib/ammo', () => new Project(
         {
           scenes: [MainScene],
