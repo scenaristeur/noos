@@ -312,12 +312,12 @@ export class MainScene extends Scene3D {
       })
       const buttonA = joystick.add.button({
         letter: 'A',
-        styles: { right: 35, bottom: 110, size: 80, position: 'absolute' }
+        styles: { right: 35, bottom: 110, size: 80 }
       })
       buttonA.onClick(() => this.jump())
       const buttonB = joystick.add.button({
         letter: 'B',
-        styles: { right: 110, bottom: 35, size: 80, position: 'fixed' }
+        styles: { right: 110, bottom: 35, size: 80 }
       })
       buttonB.onClick(() => (this.move = true))
       buttonB.onRelease(() => (this.move = false))
