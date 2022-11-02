@@ -9,10 +9,23 @@ import {
   JoyStick,
   ThirdPersonControls,
   PointerLock,
-  PointerDrag
+  PointerDrag,
+  ExtendedMesh,
 } from 'enable3d'
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
+const loader = new STLLoader()
+// let ready = false
+let base_url = process.env.BASE_URL
 
+import { Walls } from './components/walls.ts'
+import { Launcher } from './components/launcher.ts'
+import { Obstacles } from './components/obstacles.ts'
+import { Tubes } from './components/tubes.ts'
+// import { Panels } from './components/panels.ts'
+import { Colors } from './components/colors.ts'
+// import { Play } from './components/play.ts'
+import { Ball } from './components/ball.ts'
 /**
 * Is touch device?
 */
@@ -44,6 +57,7 @@ export class MainScene extends Scene3D {
     this.currentLevel = level
     this.tablename = tablename
     console.log(`Playing level ${this.currentLevel}`)
+        this.colors = new Colors(this)
 
   }
 
@@ -63,6 +77,7 @@ export class MainScene extends Scene3D {
       this.config = await import('@/tables/'+this.tablename+'/config.json');
       console.log(this, this.config)
       alert (this.config.type)
+      await this.loadCustomConfig(this)
     }
 
     /**
@@ -100,6 +115,13 @@ export class MainScene extends Scene3D {
 
     if(this.tablename == 'book') {
       warp = await this.warpSpeed('-ground', '-orbitControls')
+      const { hemisphereLight, ambientLight, directionalLight } = warp.lights
+      const intensity = 0.65
+      hemisphereLight.intensity = intensity
+      ambientLight.intensity = intensity
+      directionalLight.intensity = intensity
+
+      
       const addBook = async () => {
         const object = await this.load.gltf('book')
         const scene = object.scenes[0]
@@ -146,11 +168,7 @@ export class MainScene extends Scene3D {
     }
 
 
-    const { hemisphereLight, ambientLight, directionalLight } = warp.lights
-    const intensity = 0.65
-    hemisphereLight.intensity = intensity
-    ambientLight.intensity = intensity
-    directionalLight.intensity = intensity
+
 
     // this.physics.debug.enable()
 
@@ -373,6 +391,101 @@ export class MainScene extends Scene3D {
       }
     }
   }
+
+  async loadCustomConfig(scene){
+    if (scene.config.walls != undefined){
+      let walls = new Walls(scene)
+      console.log(walls)
+    }
+    if (scene.config.launcher != undefined){
+      scene.launcher = new Launcher(scene)
+
+    }
+    if (scene.config.obstacles != undefined){
+      let obstacles = new Obstacles(scene)
+      console.log(obstacles)
+    }
+    if (scene.config.tubes != undefined){
+      let tubes = new Tubes(scene)
+      console.log(tubes)
+    }
+    if(scene.config.flipper_parts != undefined){
+      scene.loadParts(scene, scene.config.flipper_parts)
+    }
+  }
+
+  async loadParts(ctx, parts){
+    let count = parts.length
+
+    // const helmet = new ExtendedObject3D()
+    // const pos = { x: 0, y: 2, z: -5 }
+    //
+    // loader2.load( './components/gltf/DamagedHelmet.gltf', function ( gltf ) {
+    //
+    //   // let helmet = ctx.scene.add( gltf.scene );
+    //   helmet.add(gltf.scene)
+    //
+    //   helmet.scale.set(2, 2, 2)
+    //   helmet.position.set(pos.x, pos.y, pos.z)
+    //
+    //   ctx.add.existing(helmet)
+    // } );
+
+    for (let p of parts){
+      console.log("loading", p.name)
+      let path = base_url+"stl/"+p.file+'.stl'
+      // console.log(path)
+      loader.load(
+        path,
+        function (geometry) {
+
+          const part = new ExtendedMesh(geometry, ctx.colors["mat1"])
+
+          let object = new ExtendedObject3D()
+          object.add(part)
+          p.scale != undefined ? object.scale.set(p.scale.x, p.scale.y, p.scale.z) : ""
+          p.position != undefined ? object.position.set(p.position.x, p.position.y, p.position.z) : ""
+          p.rotation != undefined ? object.rotation.set(p.rotation.x, p.rotation.y, p.rotation.z) : ""
+
+
+          ctx.scene.add(object)
+          ctx.physics.add.existing(object, {shape: p.shape})
+          object.body.setCollisionFlags(2)
+          // object.body.setBounciness(.1)
+          object.name = p.name
+          object.mass = 2
+
+          // motion clamping https://enable3d.io/docs.html#collisions
+          // object.body.setCcdMotionThreshold(ccd_threshold_bat)
+          // object.body.setCcdSweptSphereRadius(ccd_radius_bat)
+          // object.body.setBounciness(.1)
+          // console.log(object)
+        },
+        (xhr) => {
+          let progress = xhr.loaded / xhr.total
+          console.log(progress * 100 + '% loaded')
+          if(progress == 1){
+
+            if (count == 1){
+              console.log("Parts are loaded")
+              // ready = true
+              new Ball(ctx)
+            }else{
+              console.log(count+"/"+parts.length)
+            }
+            count --
+          }
+
+        },
+        (error) => {
+          console.log(error)
+          alert ('error loading'+p.name+" : "+error)
+        }
+      )
+    }
+  }
+
+
 }
 
 
