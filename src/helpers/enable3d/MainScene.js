@@ -72,7 +72,8 @@ export class MainScene extends Scene3D {
     */
     if(this.tablename == 'book') {
       // const book =
-      await this.load.preload('book', '/assets/glb/book.glb')
+        // let path = base_url+"stl/"+p.file+'.stl'
+      await this.load.preload('book', base_url+'assets/glb/book.glb')
     }else{
       this.config = await import('@/tables/'+this.tablename+'/config.json');
       console.log(this, this.config)
@@ -85,7 +86,7 @@ export class MainScene extends Scene3D {
     * https://github.com/swift502/Sketchbook
     * CC-0 license 2018
     */
-    const man = await this.load.preload('man', '/assets/glb/box_man.glb')
+    const man = await this.load.preload('man', base_url+'assets/glb/box_man.glb')
     // await Promise.all([book, man])
 
     console.log("man",man, isTouchDevice)
@@ -121,7 +122,7 @@ export class MainScene extends Scene3D {
       ambientLight.intensity = intensity
       directionalLight.intensity = intensity
 
-      
+
       const addBook = async () => {
         const object = await this.load.gltf('book')
         const scene = object.scenes[0]
