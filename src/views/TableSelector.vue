@@ -7,7 +7,7 @@
 
 
 <select class="form-control" v-model="table" @change="changeTable">
-  <option>Choose Table</option>
+  <!-- <option>Choose Table</option> -->
   <option v-for="option in options" :key="option.id" v-bind:value="option.id" >{{ option.name }}</option>
 </select>
 
@@ -22,7 +22,7 @@ export default {
     return{
       table: null,
       options: [
-        { id: null, name: 'Please select a table' },
+        { id: null, name: 'Select a table to start ! ' },
         { id: 'flipball', name: 'Flipball' },
         // { id: 'marble', name: 'Marble' },
         // { id: 'modele', name: 'Modele' },
