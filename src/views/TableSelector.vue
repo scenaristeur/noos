@@ -46,7 +46,9 @@ export default {
   watch:{
     table(){
       //  this.$store.commit('setTable', this.table)
-      const event = new CustomEvent('tableChanged', { detail: this.table });
+      let detail = {name : 'tableChanged', tablename: this.table}
+      // const event = new CustomEvent('tableChanged', { detail: this.table });
+      const event = new CustomEvent('coreEvent', {detail: detail });
       window.dispatchEvent(event);
     }
   }

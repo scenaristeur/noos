@@ -1,8 +1,7 @@
 <template>
   <div class="main-content">
-    Main
 
-    <div class="home" id="myCanvas">
+    <div class="home" id="myScene">
 
       <!-- <div id="myCustomDiv"></div> -->
     </div>
@@ -33,6 +32,7 @@ import { Project,  PhysicsLoader, /*THREE*//*  ExtendedObject3D, ExtendedMesh, C
       // })
     },
     methods:{
+  
       load(){
 
         // PhysicsLoader(
@@ -58,7 +58,7 @@ import { Project,  PhysicsLoader, /*THREE*//*  ExtendedObject3D, ExtendedMesh, C
             // antialias: true,
             // maxSubSteps: 10, //20, //10
             // fixedTimeStep: 1/240//400, //1 / 360, // 1/240
-
+            parent: 'myScene',
             antialias: false,
             maxSubSteps: 10,
             fixedTimeStep: 1 / 120,

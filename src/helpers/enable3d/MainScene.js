@@ -37,10 +37,39 @@ export class MainScene extends Scene3D {
     let scene = this
     window.addEventListener('tableChanged', async function (e) {
       scene.tablename = e.detail
-
       scene.restart({ level: scene.currentLevel + 1, tablename : e.detail })
-
     }, false);
+
+    window.addEventListener('coreEvent', async function (e) {
+      let event = e.detail
+      console.log("coreEvent", event)
+      switch (event.name) {
+        case 'tableChanged':
+        scene.tablename = event.tablename
+        scene.restart({ level: scene.currentLevel + 1, tablename : event.tablename })
+        break;
+        case 'exportThree':
+        scene.exportThree(scene.scene)
+        break;
+        case 'importThree':
+        scene.importThree()
+        break;
+        case 'exportDave':
+        scene.exportDave()
+        break;
+        case 'importDave':
+        scene.importDave()
+        break;
+        default:
+
+      }
+      // scene.exportSceneToJSON(scene.scene)
+    }, false);
+
+
+
+
+
   }
 
   async init(data= {level:0, tablename: 'book'}) {
@@ -57,7 +86,7 @@ export class MainScene extends Scene3D {
     this.currentLevel = level
     this.tablename = tablename
     console.log(`Playing level ${this.currentLevel}`)
-        this.colors = new Colors(this)
+    this.colors = new Colors(this)
 
   }
 
@@ -72,7 +101,7 @@ export class MainScene extends Scene3D {
     */
     if(this.tablename == 'book') {
       // const book =
-        // let path = base_url+"stl/"+p.file+'.stl'
+      // let path = base_url+"stl/"+p.file+'.stl'
       await this.load.preload('book', base_url+'assets/glb/book.glb')
     }else{
       this.config = await import('@/tables/'+this.tablename+'/config.json');
@@ -485,6 +514,72 @@ export class MainScene extends Scene3D {
       )
     }
   }
+
+  ////////////////
+  exportDave(){
+    console.log("export dave")
+  }
+  importDave(){
+    console.log("import dave")
+  }
+
+
+  importThree(){
+    console.log("load three scene")
+    // var loader = new THREE.ObjectLoader();
+    // 			loader.setResourcePath( scope.texturePath );
+    //
+    // 			loader.parse( data, function ( result ) {
+    //
+    // 				if ( result.isScene ) {
+    //
+    // 					editor.execute( new SetSceneCommand( editor, result ) );
+    //
+    // 				} else {
+    //
+    // 					editor.execute( new AddObjectCommand( editor, result ) );
+    //
+    // 				}
+    //
+    // 			} );
+  }
+
+
+  exportThree(scene){
+
+    console.log(scene)
+    if (scene.control != undefined){
+      scene.control.detach();
+      scene.remove(scene.control);
+    }
+
+    scene.updateMatrixWorld();
+    var result=scene.toJSON();
+    var output =JSON.stringify(result);
+    // download(output, 'scene.json', 'application/json');
+    console.log("export", output)
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output));
+    // var dlAnchorElem = document.getElementById('downloadAnchorElem');
+    const dlAnchorElem = document.createElement('a')
+    dlAnchorElem.setAttribute("href",     dataStr     );
+    dlAnchorElem.setAttribute("download", "scene.json");
+    document.body.appendChild(dlAnchorElem)
+    dlAnchorElem.click();
+    document.body.removeChild(dlAnchorElem)
+
+
+    // const a = document.createElement('a')
+    // a.href = url
+    // a.download = url.split('/').pop()
+    // document.body.appendChild(a)
+    // a.click()
+    // document.body.removeChild(a)
+  }
+
+
+
+
+  ////////////////
 
 
 }

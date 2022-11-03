@@ -2,13 +2,28 @@
   <div id="app">
     <nav>
       <router-link to="/">Home</router-link> |
+      <router-link to="/editor">Editor</router-link> |
       <router-link to="/about">About</router-link>
     </nav>
+    <MenuView />
     <router-view/>
-    0.0.1- buttons
+    0.0.1- bimports
   </div>
 </template>
 
+
+
+
+
+<script>
+export default {
+  name: 'App',
+  components: {
+    'MenuView': () => import('@/views/MenuView'),
+    // 'TableSelector': () => import('@/views/TableSelector')
+  },
+}
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
