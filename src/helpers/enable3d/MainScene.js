@@ -122,10 +122,11 @@ export class MainScene extends Scene3D {
     * https://github.com/swift502/Sketchbook
     * CC-0 license 2018
     */
-    const man = await this.load.preload('man', base_url+'assets/glb/box_man.glb')
+    // const man =
+    await this.load.preload('man', base_url+'assets/glb/box_man.glb')
     // await Promise.all([book, man])
 
-    console.log("man",man, isTouchDevice)
+  //  console.log("man",man, isTouchDevice)
 
     // for (let i = 0; i < 500; i++){
     //   let name = 28811+i

@@ -1,11 +1,26 @@
-import { FLAT } from 'enable3d'
+import { FLAT, THREE } from 'enable3d'
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+let font = undefined,
+fontName = 'optimer', // helvetiker, optimer, gentilis, droid sans, droid serif
+fontWeight = 'bold'; // normal bold
+
 
 export class Day  {
   // table
   // walls
   constructor( scene ) {
     //this.buildTable(scene,config)
-    this.buildDay(scene)
+    let mod = this
+    const loader = new FontLoader();
+    loader.load( 'fonts/' + fontName + '_' + fontWeight + '.typeface.json', function ( response ) {
+      // loader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function ( response ) {
+      font = response;
+      console.log('font', font)
+      mod.buildDay(scene)
+      //ms.refreshText();
+    } );
+
   }
 
   // buildTable(ctx, config){
@@ -27,10 +42,10 @@ export class Day  {
     const height = window.innerHeight
     let color = '#fcff96'
     // let offset = {x: 2, y:0, z:2}
-    let step = {x:2, y:.5, z:2}
+    let step = {x:4, y:.5, z:4}
     let pos  = {x: -step.x*2, y: .2, z: -step.z*2}
     for (let h = 0; h < 24; h++){
-      console.log(h)
+      // console.log(h)
 
       let box = {
         name: h,
@@ -57,6 +72,8 @@ export class Day  {
         box.z= pos.z //offset.z+h*step.z
         box.collisionFlags= 6//w.collisionFlags
         box.height= 0.2
+        box.width = 3
+        box.depth = 3
 
         if(pos.x >= step.x*2){
           pos.x = -step.x*2
@@ -72,12 +89,48 @@ export class Day  {
 
 
 
-      const texture = new FLAT.TextTexture('h '+h)
+      // const texture = new FLAT.TextTexture('h '+h)
 
       let heure = ctx.physics.add.box(
         box
         , { lambert: { color: color/*w.color*/, transparent: true, opacity: 0.8/*, metalness: 1 , material: texture.materials*/  }}
       )
+
+      const texture = new FLAT.TextTexture(''+h)
+
+      // texture in 2d space
+      const sprite2d = new FLAT.TextSprite(texture)
+      sprite2d.setScale(0.01)
+      sprite2d.position.y = .3
+      heure.add(sprite2d)
+
+
+      // pointeur now
+      var date = new Date();
+      // var minute = date.getMinutes();
+      var hour = date.getHours();
+      // var day = date.getDate();
+      // var month = date.getMonth();
+      // var year = date.getFullYear();
+      if (hour == h){
+
+        const material = new THREE.LineBasicMaterial({
+          color: 0x0000ff
+        });
+
+        const points = [];
+        points.push( new THREE.Vector3( 0, 0, 0 ) );
+        points.push( new THREE.Vector3( 0, 2, 0 ) );
+
+        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+        const line = new THREE.Line( geometry, material );
+        line.name = "now_line"
+        // line.collisionFlags= 1
+        heure.add( line );
+
+      }
+
 
       heure.body.on.collision((otherObject, event) => {
         if (event == 'start' || event =='end'){
@@ -135,6 +188,8 @@ export class Day  {
     // });
 
   }
+
+
 
 
 

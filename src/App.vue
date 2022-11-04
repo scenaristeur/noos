@@ -8,7 +8,7 @@
     <MenuView />
     <CalendarView />*
     <router-view/>
-    0.0.1- days
+    0.0.1- days hours now
   </div>
 </template>
 

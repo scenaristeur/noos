@@ -29,3 +29,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 Creating Custom 3D Objects for use with Three.js
 -  https://www.youtube.com/watch?v=-gipbcWCifc
 - https://www.vectary.com
+
+- voir pour le texte https://github.com/gamestdio/three-text2d
