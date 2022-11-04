@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@yandeu/keyboard": "^0.1.0",
+    "bottom-navigation-vue": "^2.5.2",
     "core-js": "^3.8.3",
     "enable3d": "^0.25.3",
     "register-service-worker": "^1.7.2",
     "v-calendar": "^2.4.1",
     "vue": "^2.6.14",
+    "vue-js-modal": "^2.0.1",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2"
   },

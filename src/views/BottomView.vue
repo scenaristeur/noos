@@ -1,0 +1,90 @@
+<template>
+  <!-- <div class="bottom-view"> -->
+  <div>
+    <modal name="my-first-modal">
+      <CalendarView @clicked="hide"/>
+    </modal>
+
+    <CurvedBottomNavigation :options="options" v-model="selected"
+    foreground-color='#42A5F5'
+    badge-color='#FBC02D'
+    background-color='#8FF0A4'
+    icon-color='#0000008A'
+    />
+  </div>
+</template>
+
+
+
+
+<script>
+
+import { CurvedBottomNavigation } from "bottom-navigation-vue";
+// https://vue-bottom-navigation.herokuapp.com/v2/guide/curved
+
+export default {
+  name: 'BottomView',
+  // components: {
+  //   'CurvedBottomNavigation': () => import('bottom-navigation-vue'),
+  //
+  // },
+  components: {
+    CurvedBottomNavigation,
+    'CalendarView': () => import('@/views/CalendarView'),
+  },
+  data: () => ({
+    selected: 1,
+
+    options: [
+      {
+        id: 1,
+        icon: "fas fa-home",
+        title: "Home",
+
+        // path: { name: "home" },
+      },
+      { id: 2, icon: "fas fa-pen", title: "Editor",
+      // path: { name: "editor", query: { bookmark: "important" } },
+    },
+    {
+      id: 3, icon: "fas fa-calendar-days", title: "Calendar",
+      // path: { name: "editor", query: { bookmark: "important" } },
+    },
+    {
+      id: 4,
+      icon: "fas fa-plus",
+      title: "Setting",
+      childs: [{ id: 401, icon: "fas fa-ticket-alt", title: "Tickets" }],
+    },
+    { id: 5, icon: "fas fa-bell", title: "Notification", badge: 15,
+    childs: [{ id: 501, icon: "fas fa-gifts", title: "Gifts", badge: 7 }],
+  },
+],
+}),
+watch:{
+  selected(id){
+    console.log(id)
+    if (id== 3){
+      this.show()
+    }
+  }
+},
+methods: {
+  show () {
+    this.$modal.show('my-first-modal');
+  },
+  hide () {
+    this.$modal.hide('my-first-modal');
+    this.selected = 1
+  }
+},
+
+
+}
+</script>
+
+<style lang="css" scoped>
+.bottom-view {
+
+}
+</style>

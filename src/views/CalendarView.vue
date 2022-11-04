@@ -1,6 +1,6 @@
 <template>
   <div class="calendar-view">
-    
+
     <!-- <CalendarFull /> -->
     <DatePicker :attributes="attributes" @dayclick="onDayClick" :value="value" style="float:left" />
 
@@ -64,6 +64,8 @@ export default {
         // const event = new CustomEvent('tableChanged', { detail: this.table });
         const event = new CustomEvent('coreEvent', {detail: detail });
         window.dispatchEvent(event);
+
+         this.$emit('clicked')
 
 
       }

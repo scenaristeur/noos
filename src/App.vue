@@ -1,14 +1,15 @@
 <template>
   <div id="app">
-    <nav>
+    <MenuView />
+    <router-view/>
+    <BottomView />
+    <!-- <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/editor">Editor</router-link> |
       <router-link to="/about">About</router-link>
-    </nav>
-    <MenuView />
-    <CalendarView />*
-    <router-view/>
-    0.0.1- days hours now
+    </nav> -->
+
+
   </div>
 </template>
 
@@ -21,7 +22,8 @@ export default {
   name: 'App',
   components: {
     'MenuView': () => import('@/views/MenuView'),
-    'CalendarView': () => import('@/views/CalendarView'),
+    // 'CalendarView': () => import('@/views/CalendarView'),
+    'BottomView': () => import('@/views/BottomView')
     // 'TableSelector': () => import('@/views/TableSelector')
   },
 }
