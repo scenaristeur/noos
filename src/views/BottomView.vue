@@ -1,10 +1,8 @@
 <template>
   <!-- <div class="bottom-view"> -->
   <div>
-    <modal name="my-first-modal">
-      <CalendarView @clicked="hide"/>
-    </modal>
 
+{{sel}}<hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
     <CurvedBottomNavigation :options="options" v-model="selected"
     foreground-color='#42A5F5'
     badge-color='#FBC02D'
@@ -24,13 +22,15 @@ import { CurvedBottomNavigation } from "bottom-navigation-vue";
 
 export default {
   name: 'BottomView',
+  props:['sel'],
   // components: {
   //   'CurvedBottomNavigation': () => import('bottom-navigation-vue'),
   //
   // },
   components: {
     CurvedBottomNavigation,
-    'CalendarView': () => import('@/views/CalendarView'),
+    // 'CalendarView': () => import('@/views/CalendarView'),
+    //   'MenuView': () => import('@/views/MenuView'),
   },
   data: () => ({
     selected: 1,
@@ -48,6 +48,7 @@ export default {
     },
     {
       id: 3, icon: "fas fa-calendar-days", title: "Calendar",
+      // path: { name: "home", query: { d: Date.now() } },
       // path: { name: "editor", query: { bookmark: "important" } },
     },
     {
@@ -62,22 +63,19 @@ export default {
 ],
 }),
 watch:{
+  sel(){
+    this.selected = 1
+    console.log(this.selected)
+  },
   selected(id){
     console.log(id)
     if (id== 3){
-      this.show()
+      this.$modal.show('my-first-modal');
+
     }
   }
 },
-methods: {
-  show () {
-    this.$modal.show('my-first-modal');
-  },
-  hide () {
-    this.$modal.hide('my-first-modal');
-    this.selected = 1
-  }
-},
+
 
 
 }

@@ -1,16 +1,20 @@
 <template>
   <div id="app">
-    <MenuView />
+
     <router-view/>
-    <BottomView />
+    <BottomView :sel="sel" />
     <!-- <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/editor">Editor</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav> -->
+    <router-link to="/">Home</router-link> |
+    <router-link to="/editor">Editor</router-link> |
+    <router-link to="/about">About</router-link>
+  </nav> -->
+  <modal name="my-first-modal">
+    <CalendarView @clicked="hide"/>
+    <MenuView />
+    <TableSelector />
+  </modal>
 
-
-  </div>
+</div>
 </template>
 
 
@@ -21,10 +25,27 @@
 export default {
   name: 'App',
   components: {
+
+    'CalendarView': () => import('@/views/CalendarView'),
     'MenuView': () => import('@/views/MenuView'),
+    'TableSelector': () => import('@/views/TableSelector'),
     // 'CalendarView': () => import('@/views/CalendarView'),
     'BottomView': () => import('@/views/BottomView')
     // 'TableSelector': () => import('@/views/TableSelector')
+  },
+  data(){
+    return{
+      sel: null,
+    }
+  },
+  methods: {
+    // show () {
+    //   this.$modal.show('my-first-modal');
+    // },
+    hide () {
+      this.$modal.hide('my-first-modal');
+      this.sel = Date.now()
+    }
   },
 }
 </script>

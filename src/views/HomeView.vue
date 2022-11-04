@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <TableSelector />
+    
     <MainContent />
 
   </div>
@@ -14,8 +14,8 @@ export default {
   name: 'HomeView',
   components: {
     'MainContent': () => import('@/views/MainContent'),
-    'TableSelector': () => import('@/views/TableSelector'),
-    
+
+
   },
 }
 </script>

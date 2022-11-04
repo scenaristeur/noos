@@ -2,16 +2,16 @@
   <div class="calendar-view">
 
     <!-- <CalendarFull /> -->
-    <DatePicker :attributes="attributes" @dayclick="onDayClick" :value="value" style="float:left" />
+    <DatePicker :attributes="attributes" @dayclick="onDayClick" :value="value" s />
+<br>
 
-    <div style="float:left">
       <button @click="reset">Reset</button>
       <input type="checkbox" id="grimp" v-model="grimp">
       <label for="grimp">{{ grimp }} mount / plane</label>
 
-      values : {{ value }} <br>
-      dates : {{dates}}
-    </div>
+      <!-- values : {{ value }} <br>
+      dates : {{dates}} -->
+
   </div>
 </template>
 
