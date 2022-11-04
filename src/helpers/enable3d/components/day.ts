@@ -91,16 +91,13 @@ export class Day  {
 
       // const texture = new FLAT.TextTexture('h '+h)
 
-      let heure = ctx.physics.add.box(
-        box
-        , { lambert: { color: color/*w.color*/, transparent: true, opacity: 0.8/*, metalness: 1 , material: texture.materials*/  }}
-      )
+      let heure = ctx.physics.add.box(box, { lambert: { color: color/*w.color*/, transparent: true, opacity: 0.8/*, metalness: 1 , material: texture.materials*/  }} )
 
-      const texture = new FLAT.TextTexture(''+h)
+      const texture = new FLAT.TextTexture(h+':00 - '+h+':59')
 
       // texture in 2d space
       const sprite2d = new FLAT.TextSprite(texture)
-      sprite2d.setScale(0.01)
+      sprite2d.setScale(0.003)
       sprite2d.position.y = .3
       heure.add(sprite2d)
 

@@ -126,7 +126,7 @@ export class MainScene extends Scene3D {
     await this.load.preload('man', base_url+'assets/glb/box_man.glb')
     // await Promise.all([book, man])
 
-  //  console.log("man",man, isTouchDevice)
+    //  console.log("man",man, isTouchDevice)
 
     // for (let i = 0; i < 500; i++){
     //   let name = 28811+i
@@ -220,6 +220,8 @@ export class MainScene extends Scene3D {
     this.deconstructor.add(FLAT /* same effect as FLAT.destroy */, orbitControls)
 
     // this.physics.debug.enable()
+
+
 
 
 
@@ -320,6 +322,7 @@ export class MainScene extends Scene3D {
       a: { isDown: false },
       s: { isDown: false },
       d: { isDown: false },
+      n: { isDown: false }, // goToNow()
       space: { isDown: false }
     }
 
@@ -336,6 +339,11 @@ export class MainScene extends Scene3D {
         case 32: // space
         this.keys.space.isDown = isDown
         break
+        case 78: // arrow up
+        this.keys.n.isDown = isDown
+        break
+        // default:
+        // console.log('keyCode', keyCode)
       }
     }
 
@@ -388,6 +396,14 @@ export class MainScene extends Scene3D {
     this.man.body.applyForceY(6)
   }
 
+  goToNow(){
+    var now_line = this.scene.getObjectByName( "now_line" )
+    console.log("now_line", now_line, now_line.parent.position)
+    this.camera.lookAt(now_line.parent.position)
+    }
+
+
+
   update(/*time, delta*/) {
     // console.log(time,delta)
     if (this.man && this.man.body) {
@@ -420,6 +436,11 @@ export class MainScene extends Scene3D {
       /**
       * Player Move
       */
+
+      if(this.keys.n.isDown){
+        this.goToNow()
+      }
+
       if (this.keys.w.isDown || this.move) {
         if (this.man.animation.current === 'idle' && this.canJump) this.man.animation.play('run')
 
