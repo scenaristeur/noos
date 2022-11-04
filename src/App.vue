@@ -6,8 +6,9 @@
       <router-link to="/about">About</router-link>
     </nav>
     <MenuView />
+    <CalendarView />*
     <router-view/>
-    0.0.1- bimports
+    0.0.1- days
   </div>
 </template>
 
@@ -20,6 +21,7 @@ export default {
   name: 'App',
   components: {
     'MenuView': () => import('@/views/MenuView'),
+    'CalendarView': () => import('@/views/CalendarView'),
     // 'TableSelector': () => import('@/views/TableSelector')
   },
 }

@@ -11,6 +11,7 @@ import {
   PointerLock,
   PointerDrag,
   ExtendedMesh,
+  FLAT
 } from 'enable3d'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
@@ -26,6 +27,7 @@ import { Tubes } from './components/tubes.ts'
 import { Colors } from './components/colors.ts'
 // import { Play } from './components/play.ts'
 import { Ball } from './components/ball.ts'
+import { Day } from './components/day.ts'
 /**
 * Is touch device?
 */
@@ -46,6 +48,7 @@ export class MainScene extends Scene3D {
       switch (event.name) {
         case 'tableChanged':
         scene.tablename = event.tablename
+        scene.detail = event
         scene.restart({ level: scene.currentLevel + 1, tablename : event.tablename })
         break;
         case 'exportThree':
@@ -103,7 +106,11 @@ export class MainScene extends Scene3D {
       // const book =
       // let path = base_url+"stl/"+p.file+'.stl'
       await this.load.preload('book', base_url+'assets/glb/book.glb')
-    }else{
+    }else if(this.detail.type == 'calendar'){
+      console.log("Mode calendar", this.detail)
+      await this.loadDayView(this)
+    }else {
+
       this.config = await import('@/tables/'+this.tablename+'/config.json');
       console.log(this, this.config)
       alert (this.config.type)
@@ -144,8 +151,9 @@ export class MainScene extends Scene3D {
 
 
     if(this.tablename == 'book') {
-      warp = await this.warpSpeed('-ground', '-orbitControls')
+      warp = await this.warpSpeed('-ground'/*, '-orbitControls'*/)
       const { hemisphereLight, ambientLight, directionalLight } = warp.lights
+
       const intensity = 0.65
       hemisphereLight.intensity = intensity
       ambientLight.intensity = intensity
@@ -192,13 +200,23 @@ export class MainScene extends Scene3D {
       }
       addBook()
     }else{
-      warp = await this.warpSpeed('-orbitControls')
+      warp = await this.warpSpeed(/*'-orbitControls'*/)
       console.log(warp.ground)
       warp.ground.material.color.g = 255
     }
 
 
+    // Initialize the flat elements
+    this.ui = FLAT.init(this.renderer)
+    const orbitControls = warp.orbitControls
+    // Use this if you need events on the 2D elements.
+    // If you are using orbitControls, pass it to initEvents().
+    // This makes sure orbitControls is not messing with the mouse move.
+    FLAT.initEvents({ canvas: this.renderer.domElement, orbitControls })
 
+    // Call Flat.destroy() on scene restart or stop
+    // or simply add FLAT to the deconstructor
+    this.deconstructor.add(FLAT /* same effect as FLAT.destroy */, orbitControls)
 
     // this.physics.debug.enable()
 
@@ -422,6 +440,11 @@ export class MainScene extends Scene3D {
     }
   }
 
+  async loadDayView(scene){
+    console.log(scene)
+    let day = new Day(scene)
+    console.log(day)
+  }
   async loadCustomConfig(scene){
     if (scene.config.walls != undefined){
       let walls = new Walls(scene)
