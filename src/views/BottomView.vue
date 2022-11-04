@@ -1,15 +1,16 @@
 <template>
   <!-- <div class="bottom-view"> -->
-  <div>
+  <!-- <div>
 
-{{sel}}<hr><hr><hr><hr><hr><hr><hr><hr><hr><hr>
+{{sel}}<hr><hr><hr><hr><hr><hr><hr><hr><hr><hr> -->
     <CurvedBottomNavigation :options="options" v-model="selected"
+    ref="nav"
     foreground-color='#42A5F5'
     badge-color='#FBC02D'
     background-color='#8FF0A4'
     icon-color='#0000008A'
     />
-  </div>
+  <!-- </div> -->
 </template>
 
 
@@ -68,7 +69,7 @@ watch:{
     console.log(this.selected)
   },
   selected(id){
-    console.log(id)
+    console.log(this.$refs.nav, id)
     if (id== 3){
       this.$modal.show('my-first-modal');
 

@@ -8,7 +8,8 @@
     <router-link to="/editor">Editor</router-link> |
     <router-link to="/about">About</router-link>
   </nav> -->
-  <modal name="my-first-modal">
+  <modal name="my-first-modal" draggable=".window-header" height="auto">
+     <div class="window-header">DRAG ME HERE</div>
     <CalendarView @clicked="hide"/>
     <MenuView />
     <TableSelector />
@@ -69,5 +70,9 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+modal{
+  padding: 10px;
+  margin: 10px;
 }
 </style>

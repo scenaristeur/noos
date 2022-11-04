@@ -31,3 +31,6 @@ Creating Custom 3D Objects for use with Three.js
 - https://www.vectary.com
 
 - voir pour le texte https://github.com/gamestdio/three-text2d
+
+- options possible pour le calender / modal
+https://github.com/euvl/vue-js-popover/blob/master/README.md
