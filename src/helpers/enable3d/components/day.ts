@@ -9,7 +9,7 @@ fontWeight = 'bold'; // normal bold
 export class Day  {
   // table
   // walls
-  constructor( scene ) {
+  constructor( ctx ) {
     //this.buildTable(scene,config)
     let mod = this
     const loader = new FontLoader();
@@ -17,7 +17,7 @@ export class Day  {
       // loader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function ( response ) {
       font = response;
       console.log('font', font)
-      mod.buildDay(scene)
+      mod.buildDay(ctx)
       //ms.refreshText();
     } );
 
@@ -49,36 +49,38 @@ export class Day  {
 
     let doorBeforeShape = {
       name: 'doorBefore',
-      details: {type:'door'},
+      // userData: {type:'door'},
       width: 2,//w.width,
       depth: .2,//w.depth,
       height:4,// w.height,
       x: -9.5,
       y: 1,
       z:-10.5,
-      collisionFlags: 6
+      collisionFlags: 2 // 6
     }
     let doorAfterShape = {
-      name: 'doorBefore',
-      details: {type:'door'},
+      name: 'doorAfter',
       width: 2,//w.width,
       depth: .2,//w.depth,
       height:4,// w.height,
       x: 9.5,
       y: 1,
       z:10.5,
-      collisionFlags: 6
+      collisionFlags: 2 //6
     }
 
     let doorBefore = ctx.physics.add.box(doorBeforeShape, { lambert: { color: '#00ff00'/*w.color*/, transparent: true, opacity: 0.5/*, metalness: 1 , material: texture.materials*/  }} )
     let doorAfter = ctx.physics.add.box(doorAfterShape, { lambert: { color: '#ffff00'/*w.color*/, transparent: true, opacity: 0.5/*, metalness: 1 , material: texture.materials*/  }} )
 
+    doorBefore.userData= {type:'door'}
+    doorAfter.userData= {type:'door'}
+
     for (let h = 0; h < 24; h++){
       // console.log(h)
 
       let box = {
-        name: h,
-        details: {type:'hour'},
+        name: 'hour_'+h,
+        // userData: {type:'hour'},
 
         width: 1,//w.width,
         depth: 1,//w.depth,
@@ -86,7 +88,7 @@ export class Day  {
 
       }
 
-      if (ctx.detail.grimp == true){
+      if (ctx.details.grimp == true){
         box.x= -h//0//h//w.position.x,
         box.y= (h+1)*step.y//,//w.position.y,
         box.z= 0//,//w.position.z,
@@ -122,6 +124,8 @@ export class Day  {
       // const texture = new FLAT.TextTexture('h '+h)
 
       let heure = ctx.physics.add.box(box, { lambert: { color: color/*w.color*/, transparent: true, opacity: 0.8/*, metalness: 1 , material: texture.materials*/  }} )
+
+      heure.userData= {type:'hour'}
 
       const texture = new FLAT.TextTexture(h+':00 - '+h+':59')
 

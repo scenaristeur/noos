@@ -7,9 +7,9 @@ import {
   ExtendedObject3D,
   THREE,
   JoyStick,
-  // ThirdPersonControls,
-  // PointerLock,
-  // PointerDrag,
+  ThirdPersonControls,
+  PointerLock,
+  PointerDrag,
   ExtendedMesh,
   FLAT
 } from 'enable3d'
@@ -17,7 +17,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
 const loader = new STLLoader()
 // let ready = false
-
+let base_url = process.env.BASE_URL
 
 import { Walls } from './components/walls.ts'
 import { Launcher } from './components/launcher.ts'
@@ -28,7 +28,6 @@ import { Colors } from './components/colors.ts'
 // import { Play } from './components/play.ts'
 import { Ball } from './components/ball.ts'
 import { Day } from './components/day.ts'
-import { Man } from './components/man.ts'
 /**
 * Is touch device?
 */
@@ -38,7 +37,6 @@ export class MainScene extends Scene3D {
   constructor() {
     super('MainScene')
     let scene = this
-    this.base_url = process.env.BASE_URL
     window.addEventListener('tableChanged', async function (e) {
       scene.tablename = e.detail
       scene.restart({ level: scene.currentLevel + 1, tablename : e.detail })
@@ -72,26 +70,38 @@ export class MainScene extends Scene3D {
     }, false);
 
 
-    this.details = {}
-    this.details.type = "calendar"
-    let date = new Date()
-    this.details.date = date
-    let before = new Date();
-    let after = new Date()
-    before.setDate(date.getDate() - 1);
-    after.setDate(date.getDate() + 1);
-    this.details.before = before
-    this.details.after = after
-    this.tablename = date.toJSON().slice(0,10).replace(/-/g,'-');
+
 
 
   }
 
-  async init(data= {level:0/*, tablename: 'book'*/}) {
+  async init(data= {level:0}) {
     console.log('init',data)
     const { level, tablename } = data
     this.currentLevel = level
-    tablename != undefined ? this.tablename = tablename : ""
+    // this.tablename = tablename
+
+
+    if (tablename == undefined){
+      let date = new Date()
+      this.tablename = date.toJSON().slice(0,10).replace(/-/g,'-');
+      console.log(this.tablename)
+      // let date = this.detail.date
+      // let before = new Date();
+      // let after = new Date()
+      // before.setDate(date.getDate() - 1);
+      // after.setDate(date.getDate() + 1);
+      this.detail = {
+        date: date,
+        // dateBefore: before,
+        // dateAfter: after
+      }
+      this.detail.type = "calendar"
+
+    }else{
+      this.tablename = tablename
+    }
+    console.log("this.tablename", this.tablename)
 
     this.renderer.setPixelRatio(Math.max(1, window.devicePixelRatio / 2))
 
@@ -119,9 +129,9 @@ export class MainScene extends Scene3D {
     if(this.tablename == 'book') {
       // const book =
       // let path = base_url+"stl/"+p.file+'.stl'
-      await this.load.preload('book', this.base_url+'assets/glb/book.glb')
-    }else if(this.details.type == 'calendar'){
-      console.log("Mode calendar", this.details)
+      await this.load.preload('book', base_url+'assets/glb/book.glb')
+    }else if(this.detail.type == 'calendar'){
+      console.log("Mode calendar", this.detail)
       await this.loadDayView(this)
     }else {
 
@@ -137,7 +147,7 @@ export class MainScene extends Scene3D {
     * CC-0 license 2018
     */
     // const man =
-    //  await this.load.preload('man', base_url+'assets/glb/box_man.glb')
+    await this.load.preload('man', base_url+'assets/glb/box_man.glb')
     // await Promise.all([book, man])
 
     //  console.log("man",man, isTouchDevice)
@@ -236,8 +246,160 @@ export class MainScene extends Scene3D {
     // this.physics.debug.enable()
 
 
-    let man = new Man(this)
-    man.add()
+
+
+
+    const addMan = async () => {
+      const object = await this.load.gltf('man')
+      const man = object.scene.children[0]
+
+      this.man = new ExtendedObject3D()
+      this.man.name = 'man'
+      this.man.rotateY(Math.PI + 0.1) // a hack
+      this.man.add(man)
+      this.man.rotation.set(0, Math.PI * 1.5, 0)
+
+
+      if(this.tablename == 'book') {
+        this.man.position.set(35, 0, 0)
+      }else{
+        this.man.position.set(0, 1, 0)
+      }
+
+      // add shadow
+      this.man.traverse(child => {
+        if (child.isMesh) {
+          child.castShadow = child.receiveShadow = false
+          // https://discourse.threejs.org/t/cant-export-material-from-blender-gltf/12258
+          child.material.roughness = 1
+          child.material.metalness = 0
+        }
+      })
+
+      /**
+      * Animations
+      */
+      this.animationMixers.add(this.man.animation.mixer)
+      object.animations.forEach(animation => {
+        if (animation.name) {
+          this.man.animation.add(animation.name, animation)
+        }
+      })
+      this.man.animation.play('idle')
+
+      /**
+      * Add the player to the scene with a body
+      */
+      this.add.existing(this.man)
+      this.physics.add.existing(this.man, {
+        shape: 'sphere',
+        radius: 0.25,
+        width: 0.5,
+        offset: { y: -0.25 }
+      })
+      this.man.body.setFriction(0.8)
+      this.man.body.setAngularFactor(0, 0, 0)
+
+      // https://docs.panda3d.org/1.10/python/programming/physics/bullet/ccd
+      this.man.body.setCcdMotionThreshold(1e-7)
+      this.man.body.setCcdSweptSphereRadius(0.25)
+
+
+
+
+      this.man.body.on.collision((otherObject, event) => {
+        if (otherObject.name != 'ground' && (event == 'start' || event =='end')){
+          console.log(otherObject.details,otherObject.name, event, otherObject)
+
+
+          // tablename = d.toJSON().slice(0,10).replace(/-/g,'-');
+
+        //  let detail = {name : 'tableChanged', type: 'calendar'/*, date: day.date*/}
+
+          switch (otherObject.name) {
+            case "doorBefore":
+            console.log(this.detail.dateBefore)
+          //  detail.tablename =this.detail.dateBefore.toJSON().slice(0,10).replace(/-/g,'-')
+            // let detail = {name : 'tableChanged', tablename: this.table}
+            // const event = new CustomEvent('tableChanged', { detail: this.table });
+            // const event = new CustomEvent('coreEvent', {detail: detail });
+            // window.dispatchEvent(event);
+            break;
+            case "doorAfter":
+            console.log(this.detail.dateAfter)
+          //  detail.tablename = this.detail.dateAfter.toJSON().slice(0,10).replace(/-/g,'-')
+            // scene3D.restart({ level: scene3D.currentLevel + 1, tablename : this.detail.dateAfter })
+
+            // const event = new CustomEvent('tableChanged', { detail: this.table });
+
+            break;
+            default:
+
+          }
+          // if (detail.tablename != undefined){
+          //   const event = new CustomEvent('coreEvent', {detail: detail });
+          //   window.dispatchEvent(event);
+          // }
+
+
+
+
+        }
+        // if (otherObject.name !== 'ground') {
+        //   // console.log('blueBox collided with another object than the ground')
+        //   // console.log(otherObject, event)
+        //   if (event == "start"){
+        //     console.log("collision", otherObject.uuid)
+        //
+        //     ctx.score += o.onCollision.score
+        //     console.log(ctx.score)
+        //
+        //     // score+=1
+        //     // loadText("Score : "+score)
+        //     // audio.play();
+        //   }
+        // }
+      })
+
+
+
+
+      // man.children[0].material.color.b = 200
+      // console.log('man man', man)
+
+      /**
+      * Add 3rd Person Controls
+      */
+      this.controls = new ThirdPersonControls(this.camera, this.man, {
+        offset: new THREE.Vector3(0, 1, 0),
+        targetRadius: 3
+      })
+      // set initial view to 90 deg theta
+      this.controls.theta = 90
+
+      /**
+      * Add Pointer Lock and Pointer Drag
+      */
+      if (!isTouchDevice) {
+        let pl = new PointerLock(this.canvas)
+        let pd = new PointerDrag(this.canvas)
+        pd.onMove(delta => {
+          if (pl.isLocked()) {
+            this.controls.update(delta.x * 2, delta.y * 2)
+          }
+        })
+      }
+    }
+
+
+
+
+
+
+    addMan()
+
+
+
 
 
 
@@ -268,7 +430,7 @@ export class MainScene extends Scene3D {
         case 32: // space
         this.keys.space.isDown = isDown
         break
-        case 78: // n to see now pointer
+        case 78: // arrow up
         this.keys.n.isDown = isDown
         break
         // default:
@@ -339,14 +501,6 @@ export class MainScene extends Scene3D {
       /**
       * Update Controls
       */
-
-      // chute
-      // console.log(this.man.body.position.y)
-      if (this.man.body.position.y < -20){
-        console.log('chute')
-        this.man.position.set (0, 1, 0)
-      }
-
       this.controls.update(this.moveRight * 2, -this.moveTop * 2)
       /**
       * Player Turn
@@ -396,9 +550,6 @@ export class MainScene extends Scene3D {
       if (this.keys.space.isDown && this.canJump) {
         this.jump()
       }
-
-
-
     }
   }
 
@@ -448,7 +599,7 @@ export class MainScene extends Scene3D {
 
     for (let p of parts){
       console.log("loading", p.name)
-      let path = this.base_url+"stl/"+p.file+'.stl'
+      let path = base_url+"stl/"+p.file+'.stl'
       // console.log(path)
       loader.load(
         path,
