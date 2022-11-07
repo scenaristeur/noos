@@ -39,10 +39,10 @@ export class MainScene extends Scene3D {
     super('MainScene')
     let scene = this
     this.base_url = process.env.BASE_URL
-    window.addEventListener('tableChanged', async function (e) {
-      scene.tablename = e.detail
-      scene.restart({ level: scene.currentLevel + 1, tablename : e.detail })
-    }, false);
+    // window.addEventListener('tableChanged', async function (e) {
+    //   scene.tablename = e.detail
+    //   scene.restart({ level: scene.currentLevel + 1, tablename : e.detail })
+    // }, false);
 
     window.addEventListener('coreEvent', async function (e) {
       let event = e.detail

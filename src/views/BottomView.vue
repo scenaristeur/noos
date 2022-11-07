@@ -56,7 +56,12 @@ export default {
       id: 4,
       icon: "fas fa-plus",
       title: "Setting",
-      childs: [{ id: 401, icon: "fas fa-ticket-alt", title: "Tickets" }],
+      childs: [
+        { id: 401, icon: "fas fa-ticket-alt", title: "import Three" },
+        { id: 402, icon: "fas fa-ticket-alt", title: "export Three" },
+        { id: 403, icon: "fas fa-ticket-alt", title: "import Dave" },
+        { id: 404, icon: "fas fa-ticket-alt", title: "export Dave" },
+      ],
     },
     { id: 5, icon: "fas fa-bell", title: "Notification", badge: 15,
     // childs: [{ id: 501, icon: "fas fa-gifts", title: "Gifts", badge: 7 }],
@@ -71,7 +76,7 @@ watch:{
   selected(id){
     console.log(this.$refs.nav, id)
 
-    let detail = {name : 'tableChanged'}
+    let detail = {}
     // const event = new CustomEvent('tableChanged', { detail: this.table });
 
 
@@ -79,15 +84,27 @@ watch:{
       case 3:
       this.$modal.show('my-first-modal');
       break;
+      case 401:
+      detail.name = 'importThree'
+      break;
+      case 402:
+      detail.name = 'exportThree'
+      break;
+      case 403:
+      detail.name = 'importDave'
+      break;
+      case 404:
+      detail.name = 'exportDave'
+      break;
       case 5:
       detail.tablename = 'book'
-
+      detail.name = 'tableChanged'
       break;
       default:
       console.log(id)
 
     }
-    if(detail.tablename!= undefined){
+    if(detail.name!= undefined){
       const event = new CustomEvent('coreEvent', {detail: detail });
       window.dispatchEvent(event);
     }
