@@ -75,7 +75,33 @@ export class MainScene extends Scene3D {
 
   }
 
-  async init(data= {level:0, tablename: 'book'}) {
+  async init(data= {level:0}) {
+    console.log('init',data)
+    const { level, tablename } = data
+    this.currentLevel = level
+    // this.tablename = tablename
+
+
+    if (tablename == undefined){
+      let date = new Date()
+      this.tablename = date.toJSON().slice(0,10).replace(/-/g,'-');
+      console.log(this.tablename)
+      // let date = this.detail.date
+      let before = new Date();
+      let after = new Date()
+      before.setDate(date.getDate() - 1);
+      after.setDate(date.getDate() + 1);
+      this.detail = {
+        date: date,
+        dateBefore: before,
+        dateAfter: after
+      }
+      this.detail.type = "calendar"
+
+    }else{
+      this.tablename = tablename
+    }
+
     this.renderer.setPixelRatio(Math.max(1, window.devicePixelRatio / 2))
 
     this.canJump = true
@@ -84,10 +110,7 @@ export class MainScene extends Scene3D {
     this.moveTop = 0
     this.moveRight = 0
 
-    console.log('init',data)
-    const { level, tablename } = data
-    this.currentLevel = level
-    this.tablename = tablename
+
     console.log(`Playing level ${this.currentLevel}`)
     this.colors = new Colors(this)
 
@@ -279,6 +302,67 @@ export class MainScene extends Scene3D {
       // https://docs.panda3d.org/1.10/python/programming/physics/bullet/ccd
       this.man.body.setCcdMotionThreshold(1e-7)
       this.man.body.setCcdSweptSphereRadius(0.25)
+
+
+
+
+      this.man.body.on.collision((otherObject, event) => {
+        if (otherObject.name != 'ground' && (event == 'start' || event =='end')){
+          console.log(otherObject.details,otherObject.name, event, otherObject)
+
+
+          // tablename = d.toJSON().slice(0,10).replace(/-/g,'-');
+
+          let detail = {name : 'tableChanged', type: 'calendar'/*, date: day.date*/}
+
+          switch (otherObject.name) {
+            case "doorBefore":
+            console.log(this.detail.dateBefore)
+            detail.tablename =this.detail.dateBefore.toJSON().slice(0,10).replace(/-/g,'-')
+            // let detail = {name : 'tableChanged', tablename: this.table}
+            // const event = new CustomEvent('tableChanged', { detail: this.table });
+            // const event = new CustomEvent('coreEvent', {detail: detail });
+            // window.dispatchEvent(event);
+            break;
+            case "doorAfter":
+            console.log(this.detail.dateAfter)
+            detail.tablename = this.detail.dateAfter.toJSON().slice(0,10).replace(/-/g,'-')
+            // scene3D.restart({ level: scene3D.currentLevel + 1, tablename : this.detail.dateAfter })
+
+            // const event = new CustomEvent('tableChanged', { detail: this.table });
+
+            break;
+            default:
+
+          }
+          if (detail.tablename != undefined){
+            const event = new CustomEvent('coreEvent', {detail: detail });
+            window.dispatchEvent(event);
+          }
+
+
+
+
+        }
+        // if (otherObject.name !== 'ground') {
+        //   // console.log('blueBox collided with another object than the ground')
+        //   // console.log(otherObject, event)
+        //   if (event == "start"){
+        //     console.log("collision", otherObject.uuid)
+        //
+        //     ctx.score += o.onCollision.score
+        //     console.log(ctx.score)
+        //
+        //     // score+=1
+        //     // loadText("Score : "+score)
+        //     // audio.play();
+        //   }
+        // }
+      })
+
+
+
+
       // man.children[0].material.color.b = 200
       // console.log('man man', man)
 
@@ -308,7 +392,13 @@ export class MainScene extends Scene3D {
 
 
 
+
+
+
     addMan()
+
+
+
 
 
 
@@ -400,7 +490,7 @@ export class MainScene extends Scene3D {
     var now_line = this.scene.getObjectByName( "now_line" )
     console.log("now_line", now_line, now_line.parent.position)
     this.camera.lookAt(now_line.parent.position)
-    }
+  }
 
 
 

@@ -2,14 +2,14 @@
   <!-- <div class="bottom-view"> -->
   <!-- <div>
 
-{{sel}}<hr><hr><hr><hr><hr><hr><hr><hr><hr><hr> -->
-    <CurvedBottomNavigation :options="options" v-model="selected"
-    ref="nav"
-    foreground-color='#42A5F5'
-    badge-color='#FBC02D'
-    background-color='#8FF0A4'
-    icon-color='#0000008A'
-    />
+  {{sel}}<hr><hr><hr><hr><hr><hr><hr><hr><hr><hr> -->
+  <CurvedBottomNavigation :options="options" v-model="selected"
+  ref="nav"
+  foreground-color='#42A5F5'
+  badge-color='#FBC02D'
+  background-color='#8FF0A4'
+  icon-color='#0000008A'
+  />
   <!-- </div> -->
 </template>
 
@@ -59,7 +59,7 @@ export default {
       childs: [{ id: 401, icon: "fas fa-ticket-alt", title: "Tickets" }],
     },
     { id: 5, icon: "fas fa-bell", title: "Notification", badge: 15,
-    childs: [{ id: 501, icon: "fas fa-gifts", title: "Gifts", badge: 7 }],
+    // childs: [{ id: 501, icon: "fas fa-gifts", title: "Gifts", badge: 7 }],
   },
 ],
 }),
@@ -70,10 +70,35 @@ watch:{
   },
   selected(id){
     console.log(this.$refs.nav, id)
-    if (id== 3){
+
+    let detail = {name : 'tableChanged'}
+    // const event = new CustomEvent('tableChanged', { detail: this.table });
+
+
+    switch (id) {
+      case 3:
       this.$modal.show('my-first-modal');
+      break;
+      case 5:
+      detail.tablename = 'book'
+
+      break;
+      default:
+      console.log(id)
 
     }
+    if(detail.tablename!= undefined){
+      const event = new CustomEvent('coreEvent', {detail: detail });
+      window.dispatchEvent(event);
+    }
+
+
+
+
+
+
+
+
   }
 },
 

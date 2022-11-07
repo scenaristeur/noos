@@ -44,11 +44,41 @@ export class Day  {
     // let offset = {x: 2, y:0, z:2}
     let step = {x:4, y:.5, z:4}
     let pos  = {x: -step.x*2, y: .2, z: -step.z*2}
+
+
+
+    let doorBeforeShape = {
+      name: 'doorBefore',
+      details: {type:'door'},
+      width: 2,//w.width,
+      depth: .2,//w.depth,
+      height:4,// w.height,
+      x: -9.5,
+      y: 1,
+      z:-10.5,
+      collisionFlags: 6
+    }
+    let doorAfterShape = {
+      name: 'doorBefore',
+      details: {type:'door'},
+      width: 2,//w.width,
+      depth: .2,//w.depth,
+      height:4,// w.height,
+      x: 9.5,
+      y: 1,
+      z:10.5,
+      collisionFlags: 6
+    }
+
+    let doorBefore = ctx.physics.add.box(doorBeforeShape, { lambert: { color: '#00ff00'/*w.color*/, transparent: true, opacity: 0.5/*, metalness: 1 , material: texture.materials*/  }} )
+    let doorAfter = ctx.physics.add.box(doorAfterShape, { lambert: { color: '#ffff00'/*w.color*/, transparent: true, opacity: 0.5/*, metalness: 1 , material: texture.materials*/  }} )
+
     for (let h = 0; h < 24; h++){
       // console.log(h)
 
       let box = {
         name: h,
+        details: {type:'hour'},
 
         width: 1,//w.width,
         depth: 1,//w.depth,
@@ -102,6 +132,10 @@ export class Day  {
       heure.add(sprite2d)
 
 
+
+
+
+
       // pointeur now
       var date = new Date();
       // var minute = date.getMinutes();
@@ -129,25 +163,7 @@ export class Day  {
       }
 
 
-      heure.body.on.collision((otherObject, event) => {
-        if (event == 'start' || event =='end'){
-          console.log(otherObject.name, event, h)
-        }
-        // if (otherObject.name !== 'ground') {
-        //   // console.log('blueBox collided with another object than the ground')
-        //   // console.log(otherObject, event)
-        //   if (event == "start"){
-        //     console.log("collision", otherObject.uuid)
-        //
-        //     ctx.score += o.onCollision.score
-        //     console.log(ctx.score)
-        //
-        //     // score+=1
-        //     // loadText("Score : "+score)
-        //     // audio.play();
-        //   }
-        // }
-      })
+
 
 
       // texture in 2d space
