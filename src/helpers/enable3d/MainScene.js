@@ -76,12 +76,12 @@ export class MainScene extends Scene3D {
     this.details.type = "calendar"
     let date = new Date()
     this.details.date = date
-    let before = new Date();
-    let after = new Date()
-    before.setDate(date.getDate() - 1);
-    after.setDate(date.getDate() + 1);
-    this.details.before = before
-    this.details.after = after
+    // let before = new Date();
+    // let after = new Date()
+    // before.setDate(date.getDate() - 1);
+    // after.setDate(date.getDate() + 1);
+    // this.details.before = before
+    // this.details.after = after
     this.tablename = date.toJSON().slice(0,10).replace(/-/g,'-');
 
 

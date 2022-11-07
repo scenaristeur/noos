@@ -93,11 +93,19 @@ export class Man  {
 
         // tablename = d.toJSON().slice(0,10).replace(/-/g,'-');
 
-        //  let detail = {name : 'tableChanged', type: 'calendar'/*, date: day.date*/}
+         let detail = {name : 'tableChanged', type: 'calendar'/*, date: day.date*/}
+         let date = this.ctx.details.date
+         let after = new Date();
+         let before = new Date();
+         before.setDate(date.getDate() - 1);
+         after.setDate(date.getDate() + 1);
 
         switch (otherObject.name) {
           case "doorBefore":
           console.log(otherObject.userData, this.ctx.details)
+
+          detail.tablename = before.toJSON().slice(0,10).replace(/-/g,'-');
+
           //  detail.tablename =this.detail.dateBefore.toJSON().slice(0,10).replace(/-/g,'-')
           // let detail = {name : 'tableChanged', tablename: this.table}
           // const event = new CustomEvent('tableChanged', { detail: this.table });
@@ -106,16 +114,20 @@ export class Man  {
           break;
           case "doorAfter":
           console.log(otherObject.userData, this.ctx.details)
+
+          detail.tablename = after.toJSON().slice(0,10).replace(/-/g,'-');
           //  detail.tablename = this.detail.dateAfter.toJSON().slice(0,10).replace(/-/g,'-')
           // scene3D.restart({ level: scene3D.currentLevel + 1, tablename : this.detail.dateAfter })
           // const event = new CustomEvent('tableChanged', { detail: this.table });
           break;
           default:
         }
-        // if (detail.tablename != undefined){
-        //   const event = new CustomEvent('coreEvent', {detail: detail });
-        //   window.dispatchEvent(event);
-        // }
+        if (detail.tablename != undefined){
+          // const event = new CustomEvent('coreEvent', {detail: detail });
+          // window.dispatchEvent(event);
+          this.ctx.restart({ level: this.ctx.currentLevel + 1, tablename : detail.tablename })
+
+        }
       }
     })
 
